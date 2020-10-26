@@ -111,8 +111,6 @@ function damage_calc(base_atk_t, percent_atk_t, flat_atk_t, crit_rate_t, crit_dm
 
   physical_dr = dr * (1 - physical_resistance);
   elemental_dr = dr * (1 - elemental_resistance);
-
-  console.log(dr)
   
   dmg = base_atk_t * (1 + percent_atk_t) + flat_atk_t;
 
