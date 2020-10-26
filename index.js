@@ -112,12 +112,11 @@ function damage_calc(base_atk_t, percent_atk_t, flat_atk_t, crit_rate_t, crit_dm
   physical_dr = dr / (1 - physical_resistance);
   elemental_dr = dr / (1 - elemental_resistance);
 
-
   
   dmg = base_atk_t * (1 + percent_atk_t) + flat_atk_t;
 
-  phys_dmg = ((phys_mod + 1) * (dmg * phys_percent) + phys_flat) / physical_dr;
-  ele_dmg = ((ele_mod + 1) * (dmg * ele_percent) + ele_flat) / elemental_dr;
+  phys_dmg = ((phys_mod + 1) * (dmg * phys_percent) + phys_flat) * physical_dr;
+  ele_dmg = ((ele_mod + 1) * (dmg * ele_percent) + ele_flat) * elemental_dr;
   total_dmg = phys_dmg + ele_dmg;
 
   phys_dmg_crit = phys_dmg * (1 + crit_dmg_t);
