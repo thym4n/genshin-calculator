@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+
+    <title>Genshin Impact Damage Calculator!</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+
+    <div class="alert alert-info text-center alert-dismissable">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <strong>Warning!</strong> <br>This calculator is for calculating one character's damage <strong>in a vacuum</strong> against one enemy. <br>This calculator may not be 100% accurate and does not take into account Enemy Defense or Elemental Mastery/Reactions. <br>Use it to gauge <strong>relative</strong> damage, and use at your own risk.
+    </div>
+    <br>
+
+    <h2 class="d-flex justify-content-center">Character Stats</h2><br>
+
+    <div class="row panel-group d-flex justify-content-center">
+      
+      <div class="panel panel-default">
+        <h5 class="text-center" data-toggle="tooltip" title="Character Dropdown doesn't add any Stats/Skills, only for asthetics">Character *</h5>
+        <div class="dropdown" onclick="toggleItems()">
+          <button type="button" id="character" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" style="width: 190px; height: 30px; text-align: center;">Character
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="character">
+          <li class="dropdown-item" href="#">Amber</li>
+          <li class="dropdown-item" href="#">Barbara</li>
+          <li class="dropdown-item" href="#">Beidou</li>
+          <li class="dropdown-item" href="#">Bennet</li>
+          <li class="dropdown-item" href="#">Chongyun</li>
+          <li class="dropdown-item" href="#">Diluc</li>
+          <li class="dropdown-item" href="#">Fischl</li>
+          <li class="dropdown-item" href="#">Jean</li>
+          <li class="dropdown-item" href="#">Kaeya</li>
+          <li class="dropdown-item" href="#">Keqing</li>
+          <li class="dropdown-item" href="#">Klee</li>
+          <li class="dropdown-item" href="#">Lisa</li>
+          <li class="dropdown-item" href="#">Mona</li>
+          <li class="dropdown-item" href="#">Ningguang</li>
+          <li class="dropdown-item" href="#">Noelle</li>
+          <li class="dropdown-item" href="#">Qiqi</li>
+          <li class="dropdown-item" href="#">Razor</li>
+          <li class="dropdown-item" href="#">Sucrose</li>
+          <li class="dropdown-item" href="#">Traveller</li>
+          <li class="dropdown-item" href="#">Venti</li>
+          <li class="dropdown-item" href="#">Xiangling</li>
+          <li class="dropdown-item" href="#">Xiao</li>
+          <li class="dropdown-item" href="#">Xingqiu</li>
+        </ul>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <h5 class="text-center"  data-toggle="tooltip" title="Level only affects Enemy Resistance Calculation">Level *</h5>
+        <input class="text-center" type="number" id="character_level" value="1" step="1" min="0"><br>
+      </div>
+    </div>
+    <br>
+
+
+
+
+    <div class="row panel-group d-flex justify-content-center">
+      
+      <div class="panel panel-default">
+        <h5 class="text-center">Base Stat (Attack)</h5>
+        <input class="text-center" type="number" id="base_attack" value="0" step="1" min="0"><br>
+      </div>
+      
+      <div class="panel panel-default">
+        <h5 class="text-center">% Stat (Attack)</h5>
+        <input class="text-center" type="number" id="percent_attack" value="0" step="0.1" min="0"><br>
+      </div>
+
+      <div class="panel panel-default">
+        <h5 class="text-center">Flat Stat (Attack)</h5>
+        <input class="text-center" type="number" id="flat_attack" value="0" step="1" min="0"><br>
+      </div>
+    </div>
+    <br>
+    
+
+    <div class="row panel-group d-flex justify-content-center">
+      
+      <div class="panel panel-default">
+        <h5 class="text-center">Crit Rate</h5>
+        <input class="text-center" type="number" id="crit_rate" value="0" step="0.1" min="0"><br>
+      </div>
+      
+      <div class="panel panel-default">
+        <h5 class="text-center">Crit Damage</h5>
+        <input class="text-center" type="number" id="crit_damage" value="0" step="0.1" min="0"><br>
+      </div>
+      
+      <div class="panel panel-default">  
+        <h5 class="text-center" data-toggle="tooltip" title="Bonuses are Additive (Physical %, Normal/Charged Attack, etc.">Physical % Bonus *</h5>
+        <input class="text-center" type="number" id="physical" value="0" step="0.1" min="0"><br>
+      </div>
+      
+      <div class="panel panel-default"> 
+        <h5 class="text-center" data-toggle="tooltip" title="Bonuses are Additive (Elemental %, Skill Attack, etc.">Elemental % Bonus *</h5>
+        <input class="text-center" type="number" id="elemental" value="0" step="0.1" min="0"><br>
+      </div>
+    </div>
+    <br><br>
+
+
+
+    <h2 class="d-flex justify-content-center" data-toggle="tooltip" title="Ignoring Enemy Defense">Enemy Resistance *</h2><br>
+
+    <div class="row panel-group d-flex justify-content-center">
+      
+      <div class="panel panel-default">
+        <h5 class="text-center" data-toggle="tooltip" title="Enemy Dropdown doesn't add any Resistances, only for asthetics">Enemy *</h5>
+        <div class="dropdown" onclick="toggleItems()">
+          <button type="button" id="character" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" style="width: 190px; height: 30px; text-align: center;">Enemy
+            <span class="caret"></span>
+        </button>
+        <ul id="mon_dd" class="dropdown-menu" aria-labelledby="character">
+          <li class="dropdown-item" href="#">Hilichurl</li>
+          <li class="dropdown-item" href="#">Baby Slime</li>
+          <li class="dropdown-item" href="#">Mitachurl</li>
+          <li class="dropdown-item" href="#">Samachurl</li>
+          <li class="dropdown-item" href="#">Ruin Guard</li>
+          <li class="dropdown-item" href="#">Abyss Mage</li>
+          <li class="dropdown-item" href="#">Fatui Skirmisher</li>
+          <li class="dropdown-item" href="#">Treasure Hunter</li>
+          <li class="dropdown-item" href="#">Stonehide Lawachurl</li>
+          <li class="dropdown-item" href="#">Ruin Hunter</li>
+          <li class="dropdown-item" href="#">Cryo/Pyrowhopper</li>
+          <li class="dropdown-item" href="#">Fatui Pyro Agent</li>
+          <li class="dropdown-item" href="#">Fatui Electro Skirmisher</li>
+          <li class="dropdown-item" href="#">Electro Cicin</li>
+        </ul>
+        </div>
+      </div>
+      
+      <div class="panel panel-default">
+        <h5 class="text-center">Level</h5>
+        <input class="text-center" type="number" id="enemy_level" value="1" step="1" min="0"><br>
+      </div>
+    </div>
+    <br>
+
+    <div class="row panel-group d-flex justify-content-center">
+
+      <div class="panel panel-default">  
+        <h5 class="text-center">Physical Res</h5>
+        <input class="text-center" type="number" id="phys_res" value="0" step="0.1" min="0"><br>
+      </div>
+      
+      <div class="panel panel-default"> 
+        <h5 class="text-center" data-toggle="tooltip" title="Specific Elemental Resistances are Additive">Elemental Res. *</h5>
+        <input class="text-center" type="number" id="ele_res" value="0" step="0.1" min="0"><br>
+      </div>
+    </div>
+    <br>
+
+    <div class="d-flex justify-content-center">
+      <label class="checkbox-inline" style="text-align:center; vertical-align:middle"><input type="checkbox" value="" id="ignore_reduction"> Ignore Damage Reduction?</label>
+    </div>
+    <br>
+
+
+
+
+
+    <h2 class="d-flex justify-content-center">Skill/String Damage</h2><br>
+
+    <div class="row panel-group d-flex justify-content-center">
+
+      <div class="panel panel-default"> 
+        <h5 class="text-center">% Physical</h5>
+        <input class="text-center" style="background-color:lightgreen;" type="number" id="physical_percent" value="100" step="0.01" min="0"><br>
+      </div>
+        
+      <div class="panel panel-default"> 
+        <h5 class="text-center">Flat Physical</h5>
+        <input class="text-center" style="background-color:lightgreen;" type="number" id="physical_flat" value="0" step="1" min="0"><br>
+      </div>
+        
+      <div class="panel panel-default"> 
+        <h5 class="text-center">% Elemental</h5>
+        <input class="text-center" style="background-color:lightpink;" type="number" id="elemental_percent" value="0" step="0.01" min="0"><br>
+      </div>
+        
+      <div class="panel panel-default"> 
+        <h5 class="text-center">Flat Elemental</h5>
+        <input class="text-center" style="background-color:lightpink;" type="number" id="elemental_flat" value="0" step="1" min="0"><br><br> 
+      </div>
+    </div>
+        
+    <div class="text-center">
+      <button id="static" class = "btn btn-info btn-lg text-center" onclick="static_damage()">Calculate</button><br><br>
+    </div>
+
+    <h2 class="d-flex justify-content-center">Damage Table</h2><br>
+
+    <div class="container">
+      <!-- <table class="table table-bordered table-hover text-center">
+        <thead>
+          <th class="table-info">Total Stat (Attack)</th>
+        </thead>
+        <tbody>
+          <td id="dmg0">0</td>
+        </tbody>
+      </table> -->
+
+      <div class="container" style="width:50%">
+        <table class="table table-bordered table-hover text-center">
+          <tbody>
+            <th class="table-info" style="width:50%">Total Stat (Attack)</th>
+            <td id="dmg0">0</td>
+          </tbody>
+        </table>
+      </div>
+
+      <table class="table table-bordered table-hover text-center">
+        <thead>
+          <th class="table-info"></th>
+          <th colspan="2" class="table-info">Normal Hit</th>
+          <th colspan="2" class="table-info">Crit Hit</th>
+          <th colspan="2" class="table-info">Average Hit</th>
+        </thead>
+        <thead>
+          <th class="table-info"></th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+        </thead>
+        <tbody style="background-color:lightgreen;">
+          <th class="table-info">Physical</th>
+          <td id="dmg1">0</td>
+          <td id="dmg11">0</td>
+          <td id="dmg4">0</td>
+          <td id="dmg14">0</td>
+          <td id="dmg7">0</td>
+          <td id="dmg17">0</td>
+        </tbody>
+        <tbody style="background-color:lightpink;">
+          <th class="table-info">Elemental</th>
+          <td id="dmg2">0</td>
+          <td id="dmg12">0</td>
+          <td id="dmg5">0</td>
+          <td id="dmg15">0</td>
+          <td id="dmg8">0</td>
+          <td id="dmg18">0</td>
+        </tbody>
+        <tbody style="background-color:lightgray;">
+          <th class="table-info">Total</th>
+          <td id="dmg3">0</td>
+          <td id="dmg13">0</td>
+          <td id="dmg6">0</td>
+          <td id="dmg16">0</td>
+          <td id="dmg9">0</td>
+          <td id="dmg19">0</td>
+        </tbody>
+      </table>
+    </div>
+    <br>
+
+    <h2 class="d-flex justify-content-center">Additional Weapon/Artifact Sets</h2><br>
+
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-lg-6 panel panel-info">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o1" onclick="show_object('t1', 'ba_1', 'pa_1', 'fa_1', 'cr_1', 'cd_1', 'pp_1', 'ep_1')" checked="true"> Set 1</label>
+
+          <div id="t1"  style="background-color:white;">
+          <table class="table table-sm table-bordered text-center" id="obj1">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number"  class="form-control" id="ba_1" value="0" step="1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>% ATK</th>
+              <td><input type="number" class="form-control" id="pa_1" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Flat ATK</th>
+              <td><input type="number" class="form-control" id="fa_1" value="0" step="1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Crit Rate</th>
+              <td><input type="number" class="form-control" id="cr_1" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Crit Dmg</th>
+              <td><input type="number" class="form-control" id="cd_1" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th data-toggle="tooltip" title="Bonuses are Additive (Physical %, Normal/Charged Attack, etc.">Phys. % *</th>
+              <td><input type="number" class="form-control" id="pp_1" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th data-toggle="tooltip" title="Bonuses are Additive (Elemental %, Skill Attack, etc.">Elem. % *</th>
+              <td><input type="number" class="form-control" id="ep_1" value="0" step="0.1" min="0"></td>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o2" onclick="show_object('t2', 'ba_2', 'pa_2', 'fa_2', 'cr_2', 'cd_2', 'pp_2', 'ep_2')" checked="true"> Set 2</label>
+
+          <div id="t2"  style="background-color:white;">
+          <table class="table table-sm table-bordered text-center" id="obj2">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number" class="form-control" id="ba_2" value="0" step="1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>% ATK</th>
+              <td><input type="number" class="form-control" id="pa_2" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Flat ATK</th>
+              <td><input type="number" class="form-control" id="fa_2" value="0" step="1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Crit Rate</th>
+              <td><input type="number" class="form-control" id="cr_2" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th>Crit Dmg</th>
+              <td><input type="number" class="form-control" id="cd_2" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th data-toggle="tooltip" title="Bonuses are Additive (Physical %, Normal/Charged Attack, etc.">Phys. % *</th>
+              <td><input type="number" class="form-control" id="pp_2" value="0" step="0.1" min="0"></td>
+            </tbody>
+            <tbody>
+              <th data-toggle="tooltip" title="Bonuses are Additive (Elemental %, Skill Attack, etc.">Elem. % *</th>
+              <td><input type="number" class="form-control" id="ep_2" value="0" step="0.1" min="0"></td>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <!-- <div class="col-lg-2">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o3" onclick="show_object(id)"> Object 3</label>
+
+          <table class="table table-sm table-bordered text-center">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number" class="form-control"></td>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-2">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o4" onclick="show_object(id)"> Object 4</label>
+
+          <table class="table table-sm table-bordered text-center">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number" class="form-control"></td>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-2">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o5" onclick="show_object(id)"> Object 5</label>
+
+          <table class="table table-sm table-bordered text-center">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number" class="form-control"></td>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-2">
+          <label class="checkbox-inline"><input type="checkbox" value="" id="o6" onclick="show_object(id)"> Object 6</label>
+
+          <table class="table table-sm table-bordered text-center">
+            <tbody>
+              <th>Base ATK</th>
+              <td><input type="number" class="form-control"></td>
+            </tbody>
+          </table>
+        </div> -->
+      </div>
+    </div>
+    <br>
+
+    <div class="text-center">
+        <button id="add1" class = "btn btn-info btn-lg text-center" onclick="additional_damage('ba_1', 'pa_1', 'fa_1', 'cr_1', 'cd_1', 'pp_1', 'ep_1', 1)">Add Set 1</button>
+        <button id="add2" class = "btn btn-info btn-lg text-center" onclick="additional_damage('ba_2', 'pa_2', 'fa_2', 'cr_2', 'cd_2', 'pp_2', 'ep_2', 2)">Add Set 2</button>
+        <button id="compare" class = "btn btn-info btn-lg text-center" onclick="damage_difference(3)">Compare</button>
+      <br><br>
+    </div>
+
+
+    
+    <h2 class="d-flex justify-content-center">Damage Calculation</h2><br>
+
+    <div class="container">
+      <div class="container" style="width:50%">
+      <table class="table table-bordered table-hover text-center">
+        <tbody id="row20" style="display: none">
+          <th class="table-info"> Original Total Stat</th>
+          <td  id="ts0">0</td>
+        </tbody>
+        <tbody id="row21" style="display: none">
+          <th class="table-info"> Set 1 Total Stat</th>
+          <td  id="ts1">0</td>
+        </tbody>
+        <tbody id="row22" style="display: none">
+          <th class="table-info">Set 1 Added Stats</th>
+          <td id="as1">0</td>
+        </tbody>
+        <tbody id="row23" style="display: none">
+          <th class="table-info">Set 2 Total Stats</th>
+          <td id="ts2">0</td>
+        </tbody>
+        <tbody id="row24" style="display: none">
+          <th class="table-info">Set 2 Added Stats</th>
+          <td id="as2">0</td>
+        </tbody>
+        <tbody id="row25" style="display: none">
+          <th class="table-info">Set 2 - 1 Stat Diff.</th>
+          <td id="ds">0</td>
+        </tbody>
+      </table>
+    </div>
+
+      <table class="table table-bordered table-hover text-center">
+        <thead id="head1" style="display: none">
+          <th class="table-info"></th>
+          <th colspan="2" class="table-info">Normal Hit</th>
+          <th colspan="2" class="table-info">Crit Hit</th>
+          <th colspan="2" class="table-info">Average Hit</th>
+        </thead>
+        <thead id="head2" style="display: none">
+          <th class="table-info"></th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+          <th class="table-info">Damage</th>
+          <th class="table-info">% of Stat</th>
+        </thead>
+        <tbody id="row1" style="display: none;">
+          <th class="table-info">Set 1 Physical</th>
+          <td id="dmg21">0</td>
+          <td id="dmg22">0</td>
+          <td id="dmg23">0</td>
+          <td id="dmg24">0</td>
+          <td id="dmg25">0</td>
+          <td id="dmg26">0</td>
+        </tbody>
+        <tbody id="row2" style="display: none;">
+          <th class="table-info">Set 1 Elemental</th>
+          <td id="dmg27">0</td>
+          <td id="dmg28">0</td>
+          <td id="dmg29">0</td>
+          <td id="dmg30">0</td>
+          <td id="dmg31">0</td>
+          <td id="dmg32">0</td>
+        </tbody>
+        <tbody id="row3" style="display: none;">
+          <th class="table-info">Set 1 Total</th>
+          <td id="dmg33">0</td>
+          <td id="dmg34">0</td>
+          <td id="dmg35">0</td>
+          <td id="dmg36">0</td>
+          <td id="dmg37">0</td>
+          <td id="dmg38">0</td>
+        </tbody>
+        <tbody id="row4" style="display: none;">
+          <th class="table-info">Set 1 Added Physical</th>
+          <td id="dmg39">0</td>
+          <td id="dmg40">0</td>
+          <td id="dmg41">0</td>
+          <td id="dmg42">0</td>
+          <td id="dmg43">0</td>
+          <td id="dmg44">0</td>
+        </tbody>
+
+        <tbody id="row5" style="display: none;">
+          <th class="table-info">Set 1 Added Elemental</th>
+          <td id="dmg45">0</td>
+          <td id="dmg46">0</td>
+          <td id="dmg47">0</td>
+          <td id="dmg48">0</td>
+          <td id="dmg49">0</td>
+          <td id="dmg50">0</td>
+        </tbody>
+
+        <tbody id="row6" style="display: none;">
+          <th class="table-info">Set 1 Added Total</th>
+          <td id="dmg51">0</td>
+          <td id="dmg52">0</td>
+          <td id="dmg53">0</td>
+          <td id="dmg54">0</td>
+          <td id="dmg55">0</td>
+          <td id="dmg56">0</td>
+        </tbody>
+        <tbody id="row7" style="display: none;">
+          <th class="table-info">Set 2 Physical</th>
+          <td id="dmg57">0</td>
+          <td id="dmg58">0</td>
+          <td id="dmg59">0</td>
+          <td id="dmg60">0</td>
+          <td id="dmg61">0</td>
+          <td id="dmg62">0</td>
+        </tbody>
+        <tbody id="row8" style="display: none;">
+          <th class="table-info">Set 2 Elemental</th>
+          <td id="dmg63">0</td>
+          <td id="dmg64">0</td>
+          <td id="dmg65">0</td>
+          <td id="dmg66">0</td>
+          <td id="dmg67">0</td>
+          <td id="dmg68">0</td>
+        </tbody>
+        <tbody id="row9" style="display: none;">
+          <th class="table-info">Set 2 Total</th>
+          <td id="dmg69">0</td>
+          <td id="dmg70">0</td>
+          <td id="dmg71">0</td>
+          <td id="dmg72">0</td>
+          <td id="dmg73">0</td>
+          <td id="dmg74">0</td>
+        </tbody>
+        <tbody id="row10" style="display: none;">
+          <th class="table-info">Set 2 Added Physical</th>
+          <td id="dmg75">0</td>
+          <td id="dmg76">0</td>
+          <td id="dmg77">0</td>
+          <td id="dmg78">0</td>
+          <td id="dmg79">0</td>
+          <td id="dmg80">0</td>
+        </tbody>
+
+        <tbody id="row11" style="display: none;">
+          <th class="table-info">Set 2 Added Elemental</th>
+          <td id="dmg81">0</td>
+          <td id="dmg82">0</td>
+          <td id="dmg83">0</td>
+          <td id="dmg84">0</td>
+          <td id="dmg85">0</td>
+          <td id="dmg86">0</td>
+        </tbody>
+
+        <tbody id="row12" style="display: none;">
+          <th class="table-info">Set 2 Added Total</th>
+          <td id="dmg87">0</td>
+          <td id="dmg88">0</td>
+          <td id="dmg89">0</td>
+          <td id="dmg90">0</td>
+          <td id="dmg91">0</td>
+          <td id="dmg92">0</td>
+        </tbody>
+        <tbody id="row13" style="display: none;">
+          <th class="table-info">Set 2 - 1 Physical Diff.</th>
+          <td id="dmg93">0</td>
+          <td id="dmg94">0</td>
+          <td id="dmg95">0</td>
+          <td id="dmg96">0</td>
+          <td id="dmg97">0</td>
+          <td id="dmg98">0</td>
+        </tbody>
+
+        <tbody id="row14" style="display: none;">
+          <th class="table-info">Set 2 - 1 Elemental Diff.</th>
+          <td id="dmg99">0</td>
+          <td id="dmg100">0</td>
+          <td id="dmg101">0</td>
+          <td id="dmg102">0</td>
+          <td id="dmg103">0</td>
+          <td id="dmg104">0</td>
+        </tbody>
+
+        <tbody id="row15" style="display: none;">
+          <th class="table-info">Set 2 - 1 Total Diff.</th>
+          <td id="dmg105">0</td>
+          <td id="dmg106">0</td>
+          <td id="dmg107">0</td>
+          <td id="dmg108">0</td>
+          <td id="dmg109">0</td>
+          <td id="dmg110">0</td>
+        </tbody>
+      </table>
+    </div>
+    <br>
+    
+    <h5 class="d-flex justify-content-center" id="set_comparison"></h5>
+    </div>
+    <br><br>
+
+      <!-- <button id="addition" onclick="show_addition()">Additional Stats</button><br><br>
+
+      <div id="showaddition" style="display: none">
+        <label>Base Attack</label>
+        <input type="number" id="base_attack_a" value="0" step="0.01" min="0"><br>
+        <label>% Attack</label>
+        <input type="number" id="percent_attack_a" value="0" step="0.01" min="0"><br>
+        <label>Flat Attack</label>
+        <input type="number" id="flat_attack_a" value="0" step="0.01" min="0"><br>
+        <label>Crit Rate</label>
+        <input type="number" id="crit_rate_a" value="0" step="0.01" min="0"><br>
+        <label>Crit Damage</label>
+        <input type="number" id="crit_damage_a" value="0" step="0.01" min="0"><br>
+        <label>Physical % Bonus</label>
+        <input type="number" id="physical_a" value="0" step="0.01" min="0"><br>
+        <label>Elemental % Bonus</label>
+        <input type="number" id="elemental_a" value="0" step="0.01" min="0"><br><br>
+        
+        <button id="additional_stats" onclick="additional_damage()">Calculate</button><br><br>
+        
+        <div id="dmg_t"></div>
+        <div id="dmg_crit_t"></div>
+        <div id="dmg_avg_t"></div><br>
+        <div id="dmg_diff"></div>
+        <div id="dmg_crit_diff"></div>
+        <div id="dmg_avg_diff"></div><br>
+      </div> -->
+      
+      
+      
+      <script src="index.js"></script>
+  </body>
+</html>
